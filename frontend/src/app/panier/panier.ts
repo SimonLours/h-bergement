@@ -19,27 +19,29 @@ export class Panier implements OnInit {
   http = inject(HttpClient);
 
   ngOnInit() {
-    this.http.get<any[]>('https://91.134.36.203/api/panier').subscribe(donnees => {
+    // Utilisation d'une URL relative pour s'adapter automatiquement au HTTPS [cite: 13]
+    this.http.get<any[]>('/api/panier').subscribe(donnees => {
         this.contenuPanier.set(donnees);
     });
   }
 
-  // NOUVEAU : Retirer un jeu
+  // Retirer un jeu
   supprimer(id: string) {
-    this.http.delete('/api/panier' + id).subscribe(() => {
-      // On filtre la liste pour enlever le jeu supprimé et on met à jour le signal
+    // Ajout du slash manquant pour l'URL
+    this.http.delete('/api/panier/' + id).subscribe(() => {
       const nouvelleListe = this.contenuPanier().filter(article => article._id !== id);
       this.contenuPanier.set(nouvelleListe);
     });
   }
 
-  // NOUVEAU : Payer
-  payer(id: string) {
-    if (this.total() === 0) return; // Sécurité si le panier est vide
+  // MODIFICATION ICI : On retire l'argument 'id' car on vide tout le panier lors du paiement
+  payer() {
+    if (this.total() === 0) return; 
     
-    this.http.delete('https://91.134.36.203/api/panier/' + id).subscribe(() => {
+    // On appelle l'API pour vider le panier
+    this.http.delete('/api/panier').subscribe(() => {
       alert("🎉 Paiement de " + this.total().toFixed(2) + " € validé ! Merci pour votre achat chez 3iL Gaming.");
-      this.contenuPanier.set([]); // On vide l'affichage du panier instantanément
+      this.contenuPanier.set([]); 
     });
   }
 }
