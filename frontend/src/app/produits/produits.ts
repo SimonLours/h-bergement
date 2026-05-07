@@ -17,7 +17,7 @@ export class Produits implements OnInit {
   http = inject(HttpClient); 
 
   ngOnInit() {
-    this.http.get<any[]>('/api/produits')
+    this.http.get<any[]>('https://91.134.36.203/api/produits')
       .subscribe(donnees => {
         this.mesCartes.set(donnees);
       });

@@ -22,7 +22,7 @@ export class CarteNom {
   ajouterAuPanier() {
     const jeuAAjouter = { titre: this.titre, prix: this.prix };
     
-    this.http.post('/api/panier/', jeuAAjouter)
+    this.http.post('https://91.134.36.203/api/panier', jeuAAjouter)
       .subscribe(() => {
         // Au lieu d'un alert(), on remplit notre message
         this.toastMessage = "✅ " + this.titre + " ajouté au panier !";

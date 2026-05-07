@@ -19,7 +19,7 @@ export class Panier implements OnInit {
   http = inject(HttpClient);
 
   ngOnInit() {
-    this.http.get<any[]>('/api/panier').subscribe(donnees => {
+    this.http.get<any[]>('https://91.134.36.203/api/panier').subscribe(donnees => {
         this.contenuPanier.set(donnees);
     });
   }
@@ -34,10 +34,10 @@ export class Panier implements OnInit {
   }
 
   // NOUVEAU : Payer
-  payer() {
+  payer(id: string) {
     if (this.total() === 0) return; // Sécurité si le panier est vide
     
-    this.http.delete('/api/panier').subscribe(() => {
+    this.http.delete('https://91.134.36.203/api/panier/' + id).subscribe(() => {
       alert("🎉 Paiement de " + this.total().toFixed(2) + " € validé ! Merci pour votre achat chez 3iL Gaming.");
       this.contenuPanier.set([]); // On vide l'affichage du panier instantanément
     });
