@@ -16,18 +16,16 @@ export class CarteNom {
 
   http = inject(HttpClient); 
   
-  // La variable pour notre belle notification
   toastMessage: string = '';
 
   ajouterAuPanier() {
     const jeuAAjouter = { titre: this.titre, prix: this.prix };
     
-    this.http.post('https://91.134.36.203/api/panier', jeuAAjouter)
+    // 🔴 CORRECTION : On utilise l'URL relative au lieu de l'IP
+    this.http.post('/api/panier', jeuAAjouter)
       .subscribe(() => {
-        // Au lieu d'un alert(), on remplit notre message
         this.toastMessage = "✅ " + this.titre + " ajouté au panier !";
         
-        // On fait disparaître le message après 3 secondes (3000 ms)
         setTimeout(() => {
           this.toastMessage = '';
         }, 3000);

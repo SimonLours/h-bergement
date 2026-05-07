@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core'; // 1. On importe "signal"
+import { Component, OnInit, inject, signal } from '@angular/core'; 
 import { CarteNom } from '../carte-nom/carte-nom';
 import { HttpClient } from '@angular/common/http';
 
@@ -11,13 +11,13 @@ import { HttpClient } from '@angular/common/http';
 })
 export class Produits implements OnInit {
   
-
   mesCartes = signal<any[]>([]); 
   
   http = inject(HttpClient); 
 
   ngOnInit() {
-    this.http.get<any[]>('https://91.134.36.203/api/produits')
+    // 🔴 CORRECTION : On utilise l'URL relative au lieu de l'IP
+    this.http.get<any[]>('/api/produits')
       .subscribe(donnees => {
         this.mesCartes.set(donnees);
       });
