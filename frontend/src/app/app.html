@@ -1,0 +1,21 @@
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background-color: #2c3e50; color: white;">
+  
+  <div style="display: flex; align-items: center; gap: 30px;">
+    <h1 style="margin: 0; font-family: sans-serif; text-transform: uppercase;">Mon Magasin</h1>
+    <nav>
+      <a routerLink="/" style="color: white; margin-right: 15px; text-decoration: none; font-weight: bold; font-size: 1.1rem;">Accueil</a>
+      <a routerLink="/produits" style="color: white; margin-right: 15px; text-decoration: none; font-weight: bold; font-size: 1.1rem;">Produits</a>
+      <a routerLink="/panier" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.1rem;">Panier</a>
+    </nav>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; background-color: #34495e; padding: 8px 15px; border-radius: 20px;">
+    <span style="font-size: 1.2rem;">👤</span>
+    <span style="font-weight: bold;">Mon Profil</span>
+  </div>
+
+</header>
+
+<main style="padding: 30px;">
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,37 @@
+<div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <h2 style="text-align: center; color: #2c3e50;">Mon Panier d'Achats</h2>
+
+  <ul style="list-style-type: none; padding: 0;">
+    @for (article of contenuPanier(); track article._id) {
+      <li style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; font-size: 1.1rem;">
+        <span>
+  🎮 {{ article.titre }} 
+  <span style="background-color: #f39c12; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.9rem; margin-left: 10px;">
+    x{{ article.quantite }}
+  </span>
+</span>
+        
+        <div>
+          <strong style="margin-right: 15px;">{{ article.prix }} €</strong>
+          <button (click)="supprimer(article._id)" style="background-color: #ff4d4d; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 5px 10px; font-weight: bold;">
+            X
+          </button>
+        </div>
+      </li>
+    }
+    
+    @if (contenuPanier().length === 0) {
+      <li style="text-align: center; padding: 20px; color: #7f8c8d; font-style: italic;">
+        Votre panier est vide.
+      </li>
+    }
+  </ul>
+
+  <h3 style="text-align: right; margin-top: 20px; color: #d35400;">Total à payer : {{ total() | number:'1.2-2' }} €</h3>
+
+  @if (contenuPanier().length > 0) {
+    <button (click)="payer()" style="width: 100%; padding: 15px; margin-top: 15px; background-color: #27ae60; color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer;">
+      💳 Procéder au paiement
+    </button>
+  }
+</div>

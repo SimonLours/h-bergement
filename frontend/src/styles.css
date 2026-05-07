@@ -1,0 +1,7 @@
+/* src/styles.css */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f8ff; /* Bleu très clair */
+  margin: 0;
+  padding: 20px;
+}

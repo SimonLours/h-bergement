@@ -1,0 +1,38 @@
+/* src/app/carte-nom/carte-nom.css */
+.mon-rectangle-de-gauche {
+  background-color: white;
+  padding: 20px;
+  width: 250px;
+  border-radius: 12px; /* Coins plus arrondis */
+  margin: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Jolie ombre */
+  border: 2px solid transparent; /* Bordure par défaut transparente, le style lié fera le reste */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mon-rectangle-de-gauche:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+button {
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: filter 0.2s; /* Effet de survol léger */
+}
+
+button:hover {
+  filter: brightness(90%); /* Assombrit un peu au survol */
+}

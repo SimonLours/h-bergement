@@ -1,0 +1,12 @@
+<h2 style="text-align: center; color: #2c3e50;">Nos Jeux Vidéo</h2>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;">
+  @for (carte of mesCartes(); track carte.titre) {
+    <app-carte-nom 
+      [titre]="carte.titre"
+      [imageUrl]="carte.imageUrl" 
+      [prix]="carte.prix" 
+      [buttonColor]="carte.buttonColor">
+    </app-carte-nom>
+  }
+</div>
