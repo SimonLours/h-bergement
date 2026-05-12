@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Schéma d'Architecture de l'Hébergement</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Schéma d'Infrastructure Détaillé</h1>
+
+    <div class="mermaid">
+    %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e1f5fe', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff'}}}%%
+    graph TD
+        %% --- Acteur Externe ---
+        User[("👤 Utilisateur<br/>(Navigateur Web)")]
+
+        %% --- Zone Internet (Publique) ---
+        subgraph Internet["🌐 Internet (Public)"]
+            DNS[("🔍 DNS<br/>lourss.3il-rodez-projets.site")]
+        end
+
+        %% --- Machine Virtuelle OVH (La frontière physique) ---
+        subgraph OVH_VM["🏗️ Machine Virtuelle OVH (Ubuntu)"]
+            
+            %% Ports Ouverts sur la VM
+            Port80(Port 80)
+            Port443(Port 443)
+            Port8081(Port 8081)
+
+            %% --- Réseau Interne Docker (Zone Privée) ---
+            subgraph Docker_Network["🐳 Réseau Interne Docker (Bridge)"]
+                
+                %% Conteneur Nginx (Le Proxy)
+                direction TB
+                Nginx[("🛡️ Conteneur<br/>reverse-proxy<br/>(Nginx)")]
+                
+                %% Conteneur Angular (Le Frontend)
+                Frontend[("🎨 Conteneur<br/>web-frontend<br/>(Angular SPA)")]
+                
+                %% Conteneur Node.js (Le Backend)
+                Backend[("⚙️ Conteneur<br/>api-backend<br/>(Node.js / Express)")]
+                
+                %% Conteneur MongoDB (La BDD)
+                MongoDB[("💾 Conteneur<br/>mongodb<br/>(MongoDB)")]
+                
+                %% Conteneur Mongo Express (Le Debug)
+                MongoExpress[("🔍 Conteneur<br/>mongo-express<br/>(Web GUI)")]
+            end
+            
+            %% Volumes de persistance
+            VolumeCerts[("📂 Volume Docker<br/>certs_data<br/>(Certificats SSL)")]
+            VolumeMongo[("📂 Volume Docker<br/>mongo_data<br/>(Données BDD)")]
+        end
+
+        %% --- Flux et Interactions ---
+        User -.->|1. Résolution DNS| DNS
+        User ==>|2. Requête HTTPS /443| Port443 ==> Nginx
+        User -.->|Redirection HTTP /80| Port80 -.-> Nginx
+        
+        %% Routage Interne Nginx
+        Nginx ==>|Chemin '/'| Frontend
+        Nginx ==>|Chemin '/api/'| Backend
+        
+        %% Accès Debug
+        User ==>|Accès GUI /8081| Port8081 ==> MongoExpress
+
+        %% Interactions Applicatives Internes
+        Backend ==>|Requêtes BDD<br/>Port 27017| MongoDB
+        MongoExpress ==>|Visualisation BDD| MongoDB
+
+        %% Persistance des données
+        VolumeCerts <-.->|Lecture Certificats| Nginx
+        VolumeMongo <-.->|Stockage BDD| MongoDB
+
+        %% --- Style des éléments ---
+        classDef user fill:#ffebee,stroke:#c62828,stroke-width:2px,rx:10,ry:10;
+        classDef internet fill:#fff3e0,stroke:#ef6c00,stroke-width:1px,stroke-dasharray: 5 5;
+        classDef vm fill:#eceff1,stroke:#37474f,stroke-width:2px,stroke-dasharray: 5 5,rx:15,ry:15;
+        classDef docker fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,rx:10,ry:10;
+        classDef container fill:#fff,stroke:#333,stroke-width:2px,rx:5,ry:5;
+        classDef volume fill:#f1f8e9,stroke:#558b2f,stroke-width:1px,stroke-dasharray: 2 2;
+        classDef port fill:#fff9c4,stroke:#fbc02d,stroke-width:1px;
+
+        class User user;
+        class Internet internet;
+        class OVH_VM vm;
+        class Docker_Network docker;
+        class Nginx,Frontend,Backend,MongoDB,MongoExpress container;
+        class VolumeCerts,VolumeMongo volume;
+        class Port80,Port443,Port8081 port;
+
+    </div>
+</body>
+</html>

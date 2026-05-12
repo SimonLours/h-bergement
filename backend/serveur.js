@@ -1,24 +1,26 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+const express = require('express'); // Framework pour créer notre serveur API REST
+const mongoose = require('mongoose'); // Outil pour simplifier la communication avec MongoDB
+const cors = require('cors'); // Middleware pour autoriser notre Frontend Angular à nous parler sans blocage de sécurité
 
 const app = express(); // 🔴 Une seule application pour tout le backend !
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // Middleware indispensable pour que le serveur comprenne les données envoyées en POST (format JSON)
 
 // --- Connexion à la base de données locale ---
+// On utilise la variable d'environnement définie dans notre docker-compose, ou une adresse locale par défaut
 const lienMongoDB = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/magasin-jeux";
 
 mongoose.connect(lienMongoDB)
   .then(() => {
     console.log("✅ Connexion à MongoDB réussie !");
-    initialiserJeux(); 
+    initialiserJeux(); // On remplit la base de données au démarrage si elle est vide
   })
   .catch((erreur) => console.log("❌ Erreur MongoDB :", erreur));
 
 
 // --- 1. MODÈLES DE LA BASE DE DONNÉES ---
+// Définition de la structure (Schéma Mongoose) de nos documents dans les collections
 const Produit = mongoose.model('Produit', new mongoose.Schema({
   titre: String,
   imageUrl: String,
@@ -29,11 +31,12 @@ const Produit = mongoose.model('Produit', new mongoose.Schema({
 const Panier = mongoose.model('Panier', new mongoose.Schema({
   titre: String,
   prix: Number,
-  quantite: { type: Number, default: 1 }
+  quantite: { type: Number, default: 1 } // Par défaut, la quantité ajoutée est 1
 }));
 
 
 // --- 2. CRÉATION DES JEUX VIDÉO DE DÉPART ---
+// Utilisation de async/await (promesses) pour attendre la réponse de la BDD avant de continuer
 async function initialiserJeux() {
   const count = await Produit.countDocuments();
   if (count === 0) {
@@ -49,42 +52,45 @@ async function initialiserJeux() {
 
 // --- 3. LES ROUTES (APIs) ---
 
-// Le catalogue de produits
+// Route GET : Renvoie tout le catalogue de produits
 app.get('/api/produits', async (req, res) => {
   res.json(await Produit.find()); 
 });
 
-// Le Panier
+// Route GET : Renvoie le contenu actuel de la collection Panier
 app.get('/api/panier', async (req, res) => {
   res.json(await Panier.find()); 
 });
 
-// Ajouter au panier
+// Route POST : Ajouter un jeu au panier (ou augmenter sa quantité)
 app.post('/api/panier', async (req, res) => {
+  // On cherche dans la BDD si ce jeu est déjà présent dans le panier
   const jeuExistant = await Panier.findOne({ titre: req.body.titre });
   
   if (jeuExistant) {
-    jeuExistant.quantite += 1;
+    jeuExistant.quantite += 1; // Si oui, on incrémente juste sa quantité
     await jeuExistant.save();
   } else {
+    // Sinon, on crée un tout nouveau document dans la collection Panier
     const nouvelArticle = new Panier({ ...req.body, quantite: 1 });
     await nouvelArticle.save();
   }
   res.json({ message: "Jeu ajouté au panier avec succès !" });
 });
 
-// Supprimer UN jeu précis
+// Route DELETE (avec paramètre dynamique :id) : Supprimer UN SEUL jeu précis
 app.delete('/api/panier/:id', async (req, res) => {
   await Panier.findByIdAndDelete(req.params.id);
   res.json({ message: "Jeu retiré du panier" });
 });
 
-// Vider TOUT le panier
+// Route DELETE générale : Vider TOUT le panier
 app.delete('/api/panier', async (req, res) => {
-  await Panier.deleteMany({});
+  await Panier.deleteMany({}); // Supprime tous les documents de la collection sans exception
   res.json({ message: "Paiement validé, panier vidé !" });
 });
 
 
 // --- Lancement du serveur unique ---
+// Notre API écoute sur le port interne 8000 (C'est ce port que Nginx va rediriger)
 app.listen(8000, () => console.log("🚀 API Serveur démarré sur le port 8000"));

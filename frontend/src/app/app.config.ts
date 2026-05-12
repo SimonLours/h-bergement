@@ -2,13 +2,13 @@ import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
-// 1. On importe l'outil pour faire des requêtes
+// Import du module pour pouvoir communiquer avec notre API (Backend)
 import { provideHttpClient } from '@angular/common/http'; 
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
-    // 2. On l'active pour toute l'application
+    provideRouter(routes), // Activation du système de routes
+    // Activation globale du client HTTP pour autoriser les requêtes GET/POST partout dans l'app
     provideHttpClient() 
   ]
 };
